@@ -1,5 +1,8 @@
 package com.ab.saga.orderservice.application.service;
 
-public interface OrderService {
+import com.ab.saga.orderservice.application.dto.OrderRequestDto;
+import com.ab.saga.orderservice.application.dto.OrderResponseDto;
 
+public interface OrderService {
+    OrderResponseDto createOrder(OrderRequestDto orderRequestDto);
 }

@@ -24,3 +24,20 @@ spring:
     listener:
       direct:
         acknowledge-mode: manual
+
+amqp:
+  bindings:
+    -
+      exchange: order.events
+      routingKey: order.created
+      queue: order.created.payment-service
+
+  queues:
+    order_placed: order.created.payment-service
+
+
+  routingKey:
+    order_created_events: order.created
+
+  exchange:
+    order_events: order.events
