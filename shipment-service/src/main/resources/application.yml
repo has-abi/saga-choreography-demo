@@ -1,0 +1,26 @@
+server:
+  port: 7174
+  servlet:
+    context-path: /api/ms-shipment/v1
+
+spring:
+  application:
+    name: shipment-service
+  datasource:
+    url: jdbc:postgresql://${POSTGRES_HOST:localhost}:${POSTGRES_PORT:5432}/${POSTGRES_DB:shipmentsdb}?useSSL=true
+    username: ${POSTGRES_USER:postgres}
+    password: ${POSTGRES_PASSWORD:postgres}
+
+  jpa:
+    database: postgresql
+    hibernate:
+      ddl-auto: update
+
+  rabbitmq:
+    host: ${RABBIT_MQ_HOST_NAME:localhost}
+    port: ${RABBIT_MQ_PORT:5672}
+    username: ${RABBIT_MQ_USER:guest}
+    password: ${RABBIT_MQ_PASSWORD:guest}
+    listener:
+      direct:
+        acknowledge-mode: manual
