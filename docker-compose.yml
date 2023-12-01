@@ -16,7 +16,7 @@ services:
       - "5432:5432"
 
   rabbitMQ:
-    image: rabbitmq:3.8.17-alpine
+    image: rabbitmq:3.12.8-management
     container_name: rabbit-saga
     environment:
       RABBITMQ_DEFAULT_USER: guest
