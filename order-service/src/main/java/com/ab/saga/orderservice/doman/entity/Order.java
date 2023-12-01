@@ -1,10 +1,8 @@
 package com.ab.saga.orderservice.doman.entity;
 
+import com.ab.saga.orderservice.application.enums.PaymentStatus;
 import com.ab.saga.orderservice.doman.enums.OrderStatus;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -19,5 +17,8 @@ public class Order {
     private Long id;
     private Long userId;
     private Double amount;
+    @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
+    @Enumerated(EnumType.STRING)
+    private PaymentStatus paymentStatus;
 }

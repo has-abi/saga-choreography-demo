@@ -32,9 +32,14 @@ amqp:
       routingKey: order.created
       queue: order.created.payment-service
 
-  queues:
-    order_placed: order.created.payment-service
+    -
+      exchange: payment.events
+      routingKey: payment.failed
+      queue: payment.failed.order-service
 
+  queues:
+    order_created: order.created.payment-service
+    payment_failed: payment.failed.order-service
 
   routingKey:
     order_created_events: order.created

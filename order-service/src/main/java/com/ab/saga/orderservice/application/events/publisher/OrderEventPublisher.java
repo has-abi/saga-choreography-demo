@@ -1,10 +1,13 @@
 package com.ab.saga.orderservice.application.events.publisher;
 
 import com.ab.saga.orderservice.application.dto.OrderCreatedEventDto;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+@RequiredArgsConstructor
 @Component
 public class OrderEventPublisher {
     @Value("${amqp.exchange.order_events}")
@@ -14,12 +17,8 @@ public class OrderEventPublisher {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public OrderEventPublisher(RabbitTemplate rabbitTemplate) {
-        this.rabbitTemplate = rabbitTemplate;
-    }
-
-    public void publishOrderCreatedEvent(OrderCreatedEventDto orderPlacedEventDto) {
-        rabbitTemplate.convertAndSend(orderEventsExchange, orderPlacedRoutingKey, orderPlacedEventDto);
+    public void publishOrderCreatedEvent(OrderCreatedEventDto eventDto) {
+        rabbitTemplate.convertAndSend(orderEventsExchange, orderPlacedRoutingKey, eventDto);
     }
 
 }
