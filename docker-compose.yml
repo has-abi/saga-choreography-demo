@@ -6,7 +6,7 @@ services:
     container_name: postgres_saga
     environment:
       POSTGRES_DB: postgres
-      POSTGRES_MULTIPLE_DATABASES: ordersdb, paymentsdb, inventoriesdb, shipmentsdb
+      POSTGRES_MULTIPLE_DATABASES: ordersdb, paymentsdb, shipmentsdb
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     volumes:
