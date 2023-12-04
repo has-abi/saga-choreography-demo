@@ -28,7 +28,8 @@ public class PaymentServiceApplication {
                     1L, 200.0,
                     2L, 300.0,
                     3L, 1000.0,
-                    4L, 2500.0
+                    4L, 2500.0,
+                    999L, 2500.0
             );
             balanceData.forEach((userId, balance) -> {
                 if(balanceRepository.findByUserId(userId).isEmpty()) {

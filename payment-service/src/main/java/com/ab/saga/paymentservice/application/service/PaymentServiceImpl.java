@@ -4,6 +4,7 @@ import com.ab.saga.paymentservice.application.dto.OrderCreatedEventDto;
 import com.ab.saga.paymentservice.application.dto.PaymentProcessedEventDto;
 import com.ab.saga.paymentservice.application.dto.ShipmentFailedEventDto;
 import com.ab.saga.paymentservice.application.enums.PaymentStatus;
+import com.ab.saga.paymentservice.application.enums.ShipmentStatus;
 import com.ab.saga.paymentservice.application.events.publisher.PaymentEventPublisher;
 import com.ab.saga.paymentservice.domain.entity.Transaction;
 import com.ab.saga.paymentservice.domain.repository.BalanceRepository;
@@ -56,24 +57,27 @@ public class PaymentServiceImpl implements PaymentService {
                     return Optional.empty();
                 });
 
-        paymentEventPublisher.publishPaymentProcessedEvent(paymentEventDto);
+        paymentEventPublisher.publishPaymentEvent(paymentEventDto);
     }
 
     @Transactional
     @Override
-    public void rollbackPayment(ShipmentFailedEventDto eventDto) {
-        var orderTransaction = transactionRepository.findByOrderId(eventDto.getOrderId());
+    public void cancelPayment(ShipmentFailedEventDto eventDto) {
+        if (eventDto.getShipmentStatus().equals(ShipmentStatus.SHIPMENT_FAILED)) {
+            var orderTransaction = transactionRepository.findByOrderId(eventDto.getOrderId());
 
-        orderTransaction.ifPresent(transaction -> {
-            var userBalance = balanceRepository.findByUserId(eventDto.getUserId());
-            userBalance.ifPresent(balance -> balance.setBalance(balance.getBalance() + transaction.getAmount()));
-            transactionRepository.delete(transaction);
+            orderTransaction.ifPresent(transaction -> {
+                var userBalance = balanceRepository.findByUserId(eventDto.getUserId());
+                userBalance.ifPresent(balance -> balance.setBalance(balance.getBalance() + transaction.getAmount()));
+                transactionRepository.delete(transaction);
 
-            log.info("PaymentService#rollbackPayment: Successful rollback for orderId={}, userId={}, amount={}",
-                    eventDto.getOrderId(), eventDto.getUserId(), transaction.getAmount());
+                log.info("PaymentService#rollbackPayment: Successful rollback for orderId={}, userId={}, amount={}",
+                        eventDto.getOrderId(), eventDto.getUserId(), transaction.getAmount());
 
-            var paymentEventDto = new PaymentProcessedEventDto(eventDto.getUserId(), eventDto.getOrderId());
-            paymentEventPublisher.publishPaymentProcessedEvent(paymentEventDto);
-        });
+                var paymentEventDto = new PaymentProcessedEventDto(eventDto.getUserId(), eventDto.getOrderId());
+                paymentEventDto.setPaymentStatus(PaymentStatus.PAYMENT_FAILED);
+                paymentEventPublisher.publishPaymentEvent(paymentEventDto);
+            });
+        }
     }
 }

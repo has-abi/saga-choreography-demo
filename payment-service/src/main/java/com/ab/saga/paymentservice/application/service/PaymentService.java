@@ -6,5 +6,5 @@ import com.ab.saga.paymentservice.application.dto.ShipmentFailedEventDto;
 public interface PaymentService {
     void processPayment(OrderCreatedEventDto eventDto);
 
-    void rollbackPayment(ShipmentFailedEventDto eventDto);
+    void cancelPayment(ShipmentFailedEventDto eventDto);
 }

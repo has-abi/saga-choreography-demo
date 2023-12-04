@@ -51,7 +51,7 @@ amqp:
     payment_completed: payment.completed.shipment-service
     payment_failed: payment.failed.order-service
     order_created: order.created.payment-service
-    shipment-failed: shipment.failed.payment-service
+    shipment_failed: shipment.failed.payment-service
 
   routingKey:
     payment_completed_events: payment.completed
