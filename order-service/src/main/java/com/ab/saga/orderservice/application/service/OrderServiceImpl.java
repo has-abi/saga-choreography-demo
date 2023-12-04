@@ -1,10 +1,8 @@
 package com.ab.saga.orderservice.application.service;
 
-import com.ab.saga.orderservice.application.dto.OrderCreatedEventDto;
-import com.ab.saga.orderservice.application.dto.OrderRequestDto;
-import com.ab.saga.orderservice.application.dto.OrderResponseDto;
-import com.ab.saga.orderservice.application.dto.PaymentProcessedEventDto;
+import com.ab.saga.orderservice.application.dto.*;
 import com.ab.saga.orderservice.application.enums.PaymentStatus;
+import com.ab.saga.orderservice.application.enums.ShipmentStatus;
 import com.ab.saga.orderservice.application.events.publisher.OrderEventPublisher;
 import com.ab.saga.orderservice.application.mapper.OrderMapper;
 import com.ab.saga.orderservice.doman.entity.Order;
@@ -51,6 +49,19 @@ public class OrderServiceImpl implements OrderService {
                         order.getId(), order.getUserId());
             });
 
+        }
+    }
+
+    @Transactional
+    public void confirmOrder(ShipmentEventDto eventDto) {
+        if (eventDto.getShipmentStatus().equals(ShipmentStatus.SHIPMENT_COMPLETED)) {
+            var orderToConfirm = orderRepository.findById(eventDto.getOrderId());
+
+            orderToConfirm.ifPresent(order -> {
+                order.setOrderStatus(OrderStatus.ORDER_COMPLETED);
+                log.info("OrderService#cancelOrder: Order completed orderId={}, userId={}",
+                        order.getId(), order.getUserId());
+            });
         }
     }
 }

@@ -1,6 +1,5 @@
 package com.ab.saga.orderservice.doman.entity;
 
-import com.ab.saga.orderservice.application.enums.PaymentStatus;
 import com.ab.saga.orderservice.doman.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -19,6 +18,4 @@ public class Order {
     private Double amount;
     @Enumerated(EnumType.STRING)
     private OrderStatus orderStatus;
-    @Enumerated(EnumType.STRING)
-    private PaymentStatus paymentStatus;
 }
