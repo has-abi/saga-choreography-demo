@@ -1,4 +1,4 @@
-# saga-choreography-demo
+# Saga Choreography demo
 
 ### Order Creation Transaction Workflow
 
