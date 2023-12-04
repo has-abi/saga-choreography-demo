@@ -1,6 +1,7 @@
 # Saga Choreography demo
 
 ### Order Creation Transaction Workflow
+![Transaction workflow](Saga-Choreography-demo.png)
 
 - Happy path: order-created(status: CREATED) -> payment-completed -> shipment-completed = order status is COMPLETED
 
@@ -14,4 +15,3 @@
 - Shipment failure use userId=999, amount=500
 
 
-![Transaction workflow](Saga-Choreography-demo.png)
