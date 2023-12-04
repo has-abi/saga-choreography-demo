@@ -25,12 +25,8 @@ public class PaymentEventPublisher {
 
     public void publishPaymentProcessedEvent(PaymentProcessedEventDto eventDto) {
         if (eventDto.getPaymentStatus().equals(PaymentStatus.PAYMENT_COMPLETED)) {
-            log.info("PaymentEventPublisher#publishPaymentProcessedEvent: Payment completed for orderId={}, userId={}",
-                    eventDto.getOrderId(), eventDto.getUserId());
             rabbitTemplate.convertAndSend(paymentEventsExchange, paymentCompletedRoutingKey, eventDto);
         } else {
-            log.info("PaymentEventPublisher#publishPaymentProcessedEvent: Payment Failed for orderId={}, userId={}",
-                    eventDto.getOrderId(), eventDto.getUserId());
             rabbitTemplate.convertAndSend(paymentEventsExchange, paymentFailedRoutingKey, eventDto);
         }
     }

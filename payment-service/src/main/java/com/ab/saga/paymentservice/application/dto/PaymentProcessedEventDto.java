@@ -11,7 +11,7 @@ import java.util.Date;
 public class PaymentProcessedEventDto {
     private Long userId;
     private Long orderId;
-    private PaymentStatus paymentStatus = PaymentStatus.PAYMENT_FAILED;
+    private PaymentStatus paymentStatus;
     private Date instant = new Date();
 
     public PaymentProcessedEventDto(Long userId, Long orderId) {

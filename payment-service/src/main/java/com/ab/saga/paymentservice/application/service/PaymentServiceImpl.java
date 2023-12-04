@@ -13,6 +13,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Optional;
+
 @Slf4j
 @AllArgsConstructor
 @Service
@@ -28,20 +30,31 @@ public class PaymentServiceImpl implements PaymentService {
         var paymentEventDto = new PaymentProcessedEventDto(eventDto.getUserId(), eventDto.getOrderId());
 
         var userBalance = balanceRepository.findByUserId(eventDto.getUserId());
-        userBalance.ifPresent(balance -> {
-            if (balance.getBalance() >= eventDto.getAmount()) {
-                Transaction transaction = new Transaction();
-                transaction.setUserId(eventDto.getUserId());
-                transaction.setOrderId(eventDto.getOrderId());
-                transaction.setAmount(eventDto.getAmount());
+        userBalance.filter(balance -> balance.getBalance() >= eventDto.getAmount())
+                .map(bl -> {
+                    bl.setBalance(bl.getBalance() - eventDto.getAmount());
 
-                transactionRepository.save(transaction);
+                    Transaction transaction = new Transaction();
+                    transaction.setUserId(eventDto.getUserId());
+                    transaction.setOrderId(eventDto.getOrderId());
+                    transaction.setAmount(eventDto.getAmount());
 
-                balance.setBalance(balance.getBalance() - eventDto.getAmount());
+                    transactionRepository.save(transaction);
 
-                paymentEventDto.setPaymentStatus(PaymentStatus.PAYMENT_COMPLETED);
-            }
-        });
+                    paymentEventDto.setPaymentStatus(PaymentStatus.PAYMENT_COMPLETED);
+
+                    log.info("PaymentEventPublisher#publishPaymentProcessedEvent: Payment completed for orderId={}, userId={}",
+                            eventDto.getOrderId(), eventDto.getUserId());
+
+                    return Optional.of(bl);
+                }).or(() -> {
+                    paymentEventDto.setPaymentStatus(PaymentStatus.PAYMENT_FAILED);
+
+                    log.info("PaymentEventPublisher#publishPaymentProcessedEvent: Payment Failed for orderId={}, userId={}",
+                            eventDto.getOrderId(), eventDto.getUserId());
+
+                    return Optional.empty();
+                });
 
         paymentEventPublisher.publishPaymentProcessedEvent(paymentEventDto);
     }
