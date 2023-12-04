@@ -24,3 +24,32 @@ spring:
     listener:
       direct:
         acknowledge-mode: manual
+
+amqp:
+  bindings:
+      -
+        exchange: payment.events
+        routingKey: payment.completed
+        queue: payment.completed.shipment-service
+
+      -
+        exchange: shipment.events
+        routingKey: shipment.completed
+        queue: shipment.completed.order-service
+
+      -
+        exchange: shipment.events
+        routingKey: shipment.failed
+        queue: shipment.failed.payment-service
+
+  queues:
+    shipment_completed: shipment.completed.order-service
+    shipment_failed: shipment.failed.payment-service
+    payment_completed: payment.completed.shipment-service
+
+  routingKey:
+    shipment_completed_events: shipment.completed
+    shipment_failed_events: shipment.failed
+
+  exchange:
+    shipment_events: shipment.events
