@@ -1,6 +1,6 @@
 package com.ab.saga.paymentservice.application.events.listener;
 
-import com.ab.saga.paymentservice.application.dto.ShipmentFailedEventDto;
+import com.ab.commonapi.dtos.ShipmentEventDto;
 import com.ab.saga.paymentservice.application.service.PaymentService;
 import com.rabbitmq.client.Channel;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class ShipmentEventListener {
     private final PaymentService paymentService;
 
     @RabbitListener(queues = "${amqp.queues.shipment_failed}", ackMode = "MANUAL")
-    public void handleShipmentFailedEvent(ShipmentFailedEventDto eventDto, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) Long tag) throws IOException {
+    public void handleShipmentFailedEvent(ShipmentEventDto eventDto, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) Long tag) throws IOException {
         try {
             paymentService.cancelPayment(eventDto);
             channel.basicAck(tag, false);

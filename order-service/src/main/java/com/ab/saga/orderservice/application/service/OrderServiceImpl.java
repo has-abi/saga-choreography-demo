@@ -1,8 +1,12 @@
 package com.ab.saga.orderservice.application.service;
 
-import com.ab.saga.orderservice.application.dto.*;
-import com.ab.saga.orderservice.application.enums.PaymentStatus;
-import com.ab.saga.orderservice.application.enums.ShipmentStatus;
+import com.ab.commonapi.dtos.OrderCreatedEventDTO;
+import com.ab.commonapi.dtos.PaymentEventDto;
+import com.ab.commonapi.dtos.ShipmentEventDto;
+import com.ab.commonapi.enums.PaymentStatus;
+import com.ab.commonapi.enums.ShipmentStatus;
+import com.ab.saga.orderservice.application.dto.OrderRequestDto;
+import com.ab.saga.orderservice.application.dto.OrderResponseDto;
 import com.ab.saga.orderservice.application.events.publisher.OrderEventPublisher;
 import com.ab.saga.orderservice.application.mapper.OrderMapper;
 import com.ab.saga.orderservice.doman.entity.Order;
@@ -29,17 +33,17 @@ public class OrderServiceImpl implements OrderService {
 
         order.setOrderStatus(OrderStatus.ORDER_CREATED);
         Order savedOrder = orderRepository.save(order);
-        OrderCreatedEventDto eventDto = orderMapper.orderToOrderCreatedEventDto(order);
+        OrderCreatedEventDTO eventDto = orderMapper.orderToOrderCreatedEventDto(order);
         orderEventPublisher.publishOrderCreatedEvent(eventDto);
 
-        log.info("OrderService#createOrder: Order with orderId={} for userId={}",
+        log.info("OrderService#createOrder: Order created with orderId={} for userId={}",
                 savedOrder.getId(), savedOrder.getUserId());
         return orderMapper.orderToOrderResponseDto(savedOrder);
     }
 
     @Transactional
     @Override
-    public void cancelOrder(PaymentProcessedEventDto eventDto) {
+    public void cancelOrder(PaymentEventDto eventDto) {
         if (eventDto.getPaymentStatus().equals(PaymentStatus.PAYMENT_FAILED)) {
             var orderToCancel = orderRepository.findById(eventDto.getOrderId());
 
@@ -53,6 +57,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Transactional
+    @Override
     public void confirmOrder(ShipmentEventDto eventDto) {
         if (eventDto.getShipmentStatus().equals(ShipmentStatus.SHIPMENT_COMPLETED)) {
             var orderToConfirm = orderRepository.findById(eventDto.getOrderId());

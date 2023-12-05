@@ -1,10 +1,10 @@
 package com.ab.saga.paymentservice.application.service;
 
-import com.ab.saga.paymentservice.application.dto.OrderCreatedEventDto;
-import com.ab.saga.paymentservice.application.dto.PaymentProcessedEventDto;
-import com.ab.saga.paymentservice.application.dto.ShipmentFailedEventDto;
-import com.ab.saga.paymentservice.application.enums.PaymentStatus;
-import com.ab.saga.paymentservice.application.enums.ShipmentStatus;
+import com.ab.commonapi.dtos.OrderCreatedEventDTO;
+import com.ab.commonapi.dtos.PaymentEventDto;
+import com.ab.commonapi.dtos.ShipmentEventDto;
+import com.ab.commonapi.enums.PaymentStatus;
+import com.ab.commonapi.enums.ShipmentStatus;
 import com.ab.saga.paymentservice.application.events.publisher.PaymentEventPublisher;
 import com.ab.saga.paymentservice.domain.entity.Transaction;
 import com.ab.saga.paymentservice.domain.repository.BalanceRepository;
@@ -27,8 +27,8 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
-    public void processPayment(OrderCreatedEventDto eventDto) {
-        var paymentEventDto = new PaymentProcessedEventDto(eventDto.getUserId(), eventDto.getOrderId());
+    public void processPayment(OrderCreatedEventDTO eventDto) {
+        var paymentEventDto = new PaymentEventDto(eventDto.getUserId(), eventDto.getOrderId());
 
         var userBalance = balanceRepository.findByUserId(eventDto.getUserId());
         userBalance.filter(balance -> balance.getBalance() >= eventDto.getAmount())
@@ -44,14 +44,14 @@ public class PaymentServiceImpl implements PaymentService {
 
                     paymentEventDto.setPaymentStatus(PaymentStatus.PAYMENT_COMPLETED);
 
-                    log.info("PaymentEventPublisher#publishPaymentProcessedEvent: Payment completed for orderId={}, userId={}",
+                    log.info("PaymentService#processPayment: Payment completed for orderId={}, userId={}",
                             eventDto.getOrderId(), eventDto.getUserId());
 
                     return Optional.of(bl);
                 }).or(() -> {
                     paymentEventDto.setPaymentStatus(PaymentStatus.PAYMENT_FAILED);
 
-                    log.info("PaymentEventPublisher#publishPaymentProcessedEvent: Payment Failed for orderId={}, userId={}",
+                    log.info("PaymentService#processPayment: Payment Failed for orderId={}, userId={}",
                             eventDto.getOrderId(), eventDto.getUserId());
 
                     return Optional.empty();
@@ -62,7 +62,7 @@ public class PaymentServiceImpl implements PaymentService {
 
     @Transactional
     @Override
-    public void cancelPayment(ShipmentFailedEventDto eventDto) {
+    public void cancelPayment(ShipmentEventDto eventDto) {
         if (eventDto.getShipmentStatus().equals(ShipmentStatus.SHIPMENT_FAILED)) {
             var orderTransaction = transactionRepository.findByOrderId(eventDto.getOrderId());
 
@@ -71,10 +71,10 @@ public class PaymentServiceImpl implements PaymentService {
                 userBalance.ifPresent(balance -> balance.setBalance(balance.getBalance() + transaction.getAmount()));
                 transactionRepository.delete(transaction);
 
-                log.info("PaymentService#rollbackPayment: Successful rollback for orderId={}, userId={}, amount={}",
+                log.info("PaymentService#cancelPayment: Successful rollback for orderId={}, userId={}, amount={}",
                         eventDto.getOrderId(), eventDto.getUserId(), transaction.getAmount());
 
-                var paymentEventDto = new PaymentProcessedEventDto(eventDto.getUserId(), eventDto.getOrderId());
+                var paymentEventDto = new PaymentEventDto(eventDto.getUserId(), eventDto.getOrderId());
                 paymentEventDto.setPaymentStatus(PaymentStatus.PAYMENT_FAILED);
                 paymentEventPublisher.publishPaymentEvent(paymentEventDto);
             });

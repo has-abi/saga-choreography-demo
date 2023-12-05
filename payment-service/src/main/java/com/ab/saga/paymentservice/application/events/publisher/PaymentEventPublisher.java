@@ -1,7 +1,7 @@
 package com.ab.saga.paymentservice.application.events.publisher;
 
-import com.ab.saga.paymentservice.application.dto.PaymentProcessedEventDto;
-import com.ab.saga.paymentservice.application.enums.PaymentStatus;
+import com.ab.commonapi.dtos.PaymentEventDto;
+import com.ab.commonapi.enums.PaymentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +21,7 @@ public class PaymentEventPublisher {
 
     private final RabbitTemplate rabbitTemplate;
 
-    public void publishPaymentEvent(PaymentProcessedEventDto eventDto) {
+    public void publishPaymentEvent(PaymentEventDto eventDto) {
         if (eventDto.getPaymentStatus().equals(PaymentStatus.PAYMENT_COMPLETED)) {
             rabbitTemplate.convertAndSend(paymentEventsExchange, paymentCompletedRoutingKey, eventDto);
         } else {

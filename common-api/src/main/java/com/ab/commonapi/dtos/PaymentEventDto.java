@@ -1,6 +1,6 @@
-package com.ab.saga.shipmentservice.application.dto;
+package com.ab.commonapi.dtos;
 
-import com.ab.saga.shipmentservice.domain.enums.ShipmentStatus;
+import com.ab.commonapi.enums.PaymentStatus;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -8,13 +8,13 @@ import java.util.Date;
 
 @Data
 @NoArgsConstructor
-public class ShipmentEventDto {
+public class PaymentEventDto {
     private Long userId;
     private Long orderId;
-    private ShipmentStatus shipmentStatus;
+    private PaymentStatus paymentStatus;
     private Date instant = new Date();
 
-    public ShipmentEventDto(Long userId, Long orderId) {
+    public PaymentEventDto(Long userId, Long orderId) {
         this.userId = userId;
         this.orderId = orderId;
     }

@@ -1,6 +1,6 @@
 package com.ab.saga.shipmentservice.domain.entity;
 
-import com.ab.saga.shipmentservice.domain.enums.ShipmentStatus;
+import com.ab.commonapi.enums.ShipmentStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;

@@ -1,11 +1,11 @@
 package com.ab.saga.shipmentservice.application.service;
 
-import com.ab.saga.shipmentservice.application.dto.PaymentCompletedEventDto;
-import com.ab.saga.shipmentservice.application.dto.ShipmentEventDto;
-import com.ab.saga.shipmentservice.application.enums.PaymentStatus;
+import com.ab.commonapi.dtos.PaymentEventDto;
+import com.ab.commonapi.dtos.ShipmentEventDto;
+import com.ab.commonapi.enums.PaymentStatus;
+import com.ab.commonapi.enums.ShipmentStatus;
 import com.ab.saga.shipmentservice.application.events.publisher.ShipmentEventPublisher;
 import com.ab.saga.shipmentservice.domain.entity.Shipment;
-import com.ab.saga.shipmentservice.domain.enums.ShipmentStatus;
 import com.ab.saga.shipmentservice.domain.repository.ShipmentRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -22,7 +22,7 @@ public class ShipmentServiceImpl implements ShipmentService {
 
     @Transactional
     @Override
-    public void createdShipment(PaymentCompletedEventDto eventDto) {
+    public void createdShipment(PaymentEventDto eventDto) {
         var shipmentEventDto = new ShipmentEventDto(eventDto.getUserId(), eventDto.getOrderId());
         if (eventDto.getPaymentStatus().equals(PaymentStatus.PAYMENT_COMPLETED)) {
             try {
@@ -44,7 +44,7 @@ public class ShipmentServiceImpl implements ShipmentService {
     }
 
 
-    private void handleCreateShipment(PaymentCompletedEventDto eventDto) {
+    private void handleCreateShipment(PaymentEventDto eventDto) {
         if (eventDto.getUserId() == 999) {
             throw new RuntimeException("Shipment failed");
         }

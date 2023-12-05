@@ -1,6 +1,6 @@
 package com.ab.saga.paymentservice.application.events.listener;
 
-import com.ab.saga.paymentservice.application.dto.OrderCreatedEventDto;
+import com.ab.commonapi.dtos.OrderCreatedEventDTO;
 import com.ab.saga.paymentservice.application.service.PaymentService;
 import com.rabbitmq.client.Channel;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class OrderEventListener {
     private final PaymentService paymentService;
 
     @RabbitListener(queues = "${amqp.queues.order_created}", ackMode = "MANUAL")
-    public void handleOrderCreatedEvent(OrderCreatedEventDto eventDto, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) Long tag)
+    public void handleOrderCreatedEvent(OrderCreatedEventDTO eventDto, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) Long tag)
             throws IOException {
         try {
             paymentService.processPayment(eventDto);

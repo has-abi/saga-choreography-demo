@@ -1,10 +1,10 @@
 package com.ab.saga.paymentservice.application.service;
 
-import com.ab.saga.paymentservice.application.dto.OrderCreatedEventDto;
-import com.ab.saga.paymentservice.application.dto.ShipmentFailedEventDto;
+import com.ab.commonapi.dtos.OrderCreatedEventDTO;
+import com.ab.commonapi.dtos.ShipmentEventDto;
 
 public interface PaymentService {
-    void processPayment(OrderCreatedEventDto eventDto);
+    void processPayment(OrderCreatedEventDTO eventDto);
 
-    void cancelPayment(ShipmentFailedEventDto eventDto);
+    void cancelPayment(ShipmentEventDto eventDto);
 }

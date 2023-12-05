@@ -1,7 +1,7 @@
 package com.ab.saga.shipmentservice.application.service;
 
-import com.ab.saga.shipmentservice.application.dto.PaymentCompletedEventDto;
+import com.ab.commonapi.dtos.PaymentEventDto;
 
 public interface ShipmentService {
-    void createdShipment(PaymentCompletedEventDto eventDto);
+    void createdShipment(PaymentEventDto eventDto);
 }

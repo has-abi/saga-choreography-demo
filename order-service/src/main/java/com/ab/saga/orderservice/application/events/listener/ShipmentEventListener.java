@@ -1,6 +1,6 @@
 package com.ab.saga.orderservice.application.events.listener;
 
-import com.ab.saga.orderservice.application.dto.ShipmentEventDto;
+import com.ab.commonapi.dtos.ShipmentEventDto;
 import com.ab.saga.orderservice.application.service.OrderService;
 import com.rabbitmq.client.Channel;
 import lombok.AllArgsConstructor;

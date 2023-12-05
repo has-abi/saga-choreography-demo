@@ -1,4 +1,4 @@
-package com.ab.saga.paymentservice.application.dto;
+package com.ab.commonapi.dtos;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -9,9 +9,9 @@ import java.util.Date;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class OrderCreatedEventDto {
+public class OrderCreatedEventDTO {
     private Long orderId;
     private Long userId;
     private Double amount;
-    private Date instant;
+    private Date instant = new Date();
 }

@@ -1,7 +1,7 @@
 package com.ab.saga.shipmentservice.application.events.publisher;
 
-import com.ab.saga.shipmentservice.application.dto.ShipmentEventDto;
-import com.ab.saga.shipmentservice.domain.enums.ShipmentStatus;
+import com.ab.commonapi.dtos.ShipmentEventDto;
+import com.ab.commonapi.enums.ShipmentStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;

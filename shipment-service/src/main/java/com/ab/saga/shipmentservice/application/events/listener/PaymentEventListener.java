@@ -1,6 +1,6 @@
 package com.ab.saga.shipmentservice.application.events.listener;
 
-import com.ab.saga.shipmentservice.application.dto.PaymentCompletedEventDto;
+import com.ab.commonapi.dtos.PaymentEventDto;
 import com.ab.saga.shipmentservice.application.service.ShipmentService;
 import com.rabbitmq.client.Channel;
 import lombok.AllArgsConstructor;
@@ -18,7 +18,7 @@ public class PaymentEventListener {
     private final ShipmentService shipmentService;
 
     @RabbitListener(queues = "${amqp.queues.payment_completed}", ackMode = "MANUAL")
-    public void handlePaymentCompletedEvent(PaymentCompletedEventDto eventDto, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) Long tag)
+    public void handlePaymentCompletedEvent(PaymentEventDto eventDto, Channel channel, @Header(AmqpHeaders.DELIVERY_TAG) Long tag)
             throws IOException {
         try {
             shipmentService.createdShipment(eventDto);
